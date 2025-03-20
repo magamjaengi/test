@@ -1,0 +1,313 @@
+class UIManager:
+    """UI 이벤트 및 연결을 관리하는 클래스"""
+
+    def __init__(self, pub_app_manager):
+        self.app = pub_app_manager
+        self.ui = pub_app_manager.ui
+        
+        # AppManager에서 받아오는 class 인스턴스
+        self.maya_path_manager = pub_app_manager.maya_path_manager
+        self.maya_file_manager = pub_app_manager.maya_file_manager
+        self.playblast_handler = pub_app_manager.playblast_handler
+        
+        self.click_connect()
+        self.label_set_text()
+        self.combobox_ui()
+#######################################################################
+        self.apply_styles()  # 스타일 적용
+        self.load_images()   # 이미지 적용
+        self.setup_ui()
+    
+    def setup_ui(self):
+        """UI 요소 스타일 및 이벤트 설정"""
+        self.apply_styles_text()
+        self.setup_events()
+#######################################################################
+    def click_connect(self):
+        """clicked.connect() 모음"""
+        self.ui.pushButton_publish.clicked.connect(self.maya_file_manager.to_publish)
+        self.ui.pushButton_screen.clicked.connect(self.playblast_handler.screen_shot)
+        self.ui.pushButton_playblast.clicked.connect(self.playblast_handler.run_playblast)
+
+    def label_set_text(self):
+        """label setText() 모음"""
+        self.ui.label_works_info.setText(self.maya_path_manager.works_info)
+        self.ui.label_step.setText(self.maya_path_manager.step)
+        self.ui.label_pub_path.setText(self.maya_path_manager.no_dot_ext_pub_path)
+
+    def combobox_ui(self):
+        """ComboBox 관련 메서드"""
+        self.combo_ext = self.ui.comboBox_ext
+        self.ext_list = [".ma", ".mb"]
+        self.combo_ext.addItems(self.ext_list)
+
+        """현재 파일의 확장자를 디폴트로 ComboBox에 나오도록 설정"""
+        for combo_item in self.ext_list:
+            if self.maya_path_manager.ext == combo_item:
+                self.combo_ext.setCurrentText(combo_item)
+                break
+
+#######################################################################
+    def apply_styles(self):
+
+        """UI 스타일을 설정하는 함수"""
+
+        button_style_2 = """
+            QPushButton {
+                border: 2px solid #fdcb01;
+                border-radius: 10px;
+                padding: 8px;
+                font: bold 18px "Comic Sans MS";
+                background-color: #FFF8DC;
+                color: #333333;
+            }
+            QPushButton:hover {
+                background-color: #feeca4;
+                border: 2px solid #feeca4;
+            }
+            QPushButton:pressed {
+                background-color: #fdd835;
+                border: 2px solid #fbc02d;
+            }
+        """
+
+        label_style_logo = """
+            QLabel {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                font-size: 50px;
+                color: #white;
+            }
+        """
+        
+        label_style_1 = """
+            QLabel {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                font-size: 20px;
+                font-weight: bold;
+                color: #fdcb01;
+            }
+        """
+
+        label_style_2 = """
+            QLabel {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                font-size: 22px;
+                color: #fdcb01;
+            }
+        """
+
+        label_style_3 = """
+            QLabel {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                font-size: 18px;
+                color: #FFF8DC;
+            }
+        """
+        combo_box_style = """
+            QComboBox {
+                border: 2px solid #fdcb01;
+                border-radius: 8px;
+                padding: 5px;
+                background-color: #feeca4;
+                color: #111111;
+                font: 19px "Comic Sans MS";
+            }
+            QComboBox:hover {
+                background-color: #faefc1;
+            }
+            QComboBox::drop-down {
+                border: none;
+                background: #fdcb01;
+                border-radius: 4px;
+            }
+            QComboBox QAbstractItemView {
+                background: #FFF8DC;
+                border: 2px solid #fdcb01;
+                color: #555555;
+                selection-background-color: #faefc1;
+            }
+        """        
+
+        line_style = """
+            QFrame {
+                background: qlineargradient(
+                    spread: pad, 
+                    x1: 0, y1: 0, 
+                    x2: 1, y2: 0, 
+                    stop: 0 #ff9800, 
+                    stop: 1 #FFF8DC
+                ); /* 부드러운 그라디언트 효과 */
+                border-radius: 2px; /* 둥근 테두리 */
+            }
+
+            QFrame:horizontal {
+                min-height: 1px;
+                max-height: 1px; /* 강제로 높이를 1px로 고정 */
+            }
+
+            QFrame:vertical {
+                min-width: 1px;
+                max-width: 1px; /* 강제로 폭을 1px로 고정 (세로선) */
+            }
+        """
+
+        text_edit_style = """
+            QTextEdit {
+                border: 2px solid #fdcb01;
+                border-radius: 10px;
+                padding: 5px;
+                font: bold 16px "Comic Sans MS";
+                background-color: #FFF8DC;
+                color: #333333;
+            }
+            QTextEdit:focus {
+                border: 2px solid #FFF8DC;
+                background-color: #feeca4;
+            }
+        """
+
+
+        # 스타일 적용 (각 UI 요소에 설정 적용)       
+        self.ui.pushButton_publish.setStyleSheet(button_style_2)
+        self.ui.pushButton_playblast.setStyleSheet(button_style_2)
+        
+        self.ui.label_logo.setStyleSheet(label_style_logo) 
+
+        self.ui.label_text_1.setStyleSheet(label_style_1)
+        self.ui.label_text_2.setStyleSheet(label_style_1)
+        self.ui.label_text_3.setStyleSheet(label_style_1)
+
+        self.ui.label_text_4.setStyleSheet(label_style_2)
+        self.ui.label_text_5.setStyleSheet(label_style_2)
+
+        self.ui.label_works_info.setStyleSheet(label_style_3)
+        self.ui.label_step.setStyleSheet(label_style_3)
+        self.ui.label_pub_path.setStyleSheet(label_style_3) 
+
+        self.ui.comboBox_ext.setStyleSheet(combo_box_style) 
+        
+        self.ui.line_horizontal_1.setStyleSheet(line_style)
+        self.ui.line_horizontal_2.setStyleSheet(line_style)
+        self.ui.line_horizontal_3.setStyleSheet(line_style)
+        self.ui.line_horizontal_4.setStyleSheet(line_style)
+
+        self.ui.line_vertical_1.setStyleSheet(line_style)
+        self.ui.line_vertical_2.setStyleSheet(line_style)
+        self.ui.line_vertical_3.setStyleSheet(line_style)
+        self.ui.line_vertical_4.setStyleSheet(line_style)
+
+#######################################################################
+
+    def apply_styles_text(self):
+        """텍스트 UI 스타일을 설정하는 함수"""
+
+        # 버튼 스타일
+        button_style_1 = """
+            QPushButton {
+                border: 2px solid #fdcb01;
+                border-radius: 10px;
+                padding: 8px;
+                font: bold 18px "Comic Sans MS";
+                background-color: #FFF8DC;
+                color: #333333;
+            }
+            QPushButton:hover {
+                background-color: #feeca4;
+                border: 2px solid #feeca4;
+            }
+            QPushButton:pressed {
+                background-color: #fdd835;
+                border: 2px solid #fbc02d;
+            }
+        """
+
+        # QTextEdit 스타일 (기존 스타일 유지)
+        text_edit_style = """
+            QTextEdit {
+                border: 2px solid #fdcb01;
+                border-radius: 10px;
+                padding: 5px;
+                font: bold 16px "Comic Sans MS";
+                background-color: #FFF8DC;
+                color: gray;
+            }
+            QTextEdit:focus {
+                border: 2px solid #FFF8DC;
+                background-color: #feeca4;
+                color: black;
+            }
+        """
+
+        self.ui.pushButton_screen.setStyleSheet(button_style_1)        
+        self.ui.textEdit_description.setStyleSheet(text_edit_style)
+
+        # 기본 텍스트 설정
+        self.ui.pushButton_screen.setText("Click me")
+        self.ui.textEdit_description.setPlainText("텍스트 입력")
+
+    def setup_events(self):
+        """버튼 및 텍스트 이벤트 설정"""
+        self.ui.pushButton_screen.clicked.connect(self.clear_button_text)
+        self.ui.textEdit_description.textChanged.connect(self.clear_text_hint)
+        self.ui.textEdit_description.focusOutEvent = self.restore_text_hint
+
+    def clear_button_text(self):
+        """버튼을 클릭하면 텍스트 제거 및 아이콘 초기화"""
+        self.ui.pushButton_screen.setText("")  # 버튼 텍스트 제거
+        self.ui.pushButton_screen.setIcon(self.playblast_handler.change_button)  # 아이콘 제거
+        self.ui.pushButton_screen.setIcon(Qicon())  # 아이콘 제거
+
+
+    def clear_text_hint(self):
+        """사용자가 텍스트 입력 시 힌트 자동 제거"""
+        if self.ui.textEdit_description.toPlainText() == "텍스트 입력":
+            self.ui.textEdit_description.clear()  # 기본값 제거
+            self.ui.textEdit_description.setStyleSheet("""
+                QTextEdit {
+                    border: 2px solid #fdcb01;
+                    border-radius: 10px;
+                    padding: 5px;
+                    font: bold 16px "Comic Sans MS";
+                    background-color: #FFF8DC;
+                    color: black;
+                }
+            """)
+
+    def restore_text_hint(self, event):
+        """텍스트 필드가 포커스를 잃으면 힌트 복원"""
+        if not self.ui.textEdit_description.toPlainText().strip():
+            self.ui.textEdit_description.setPlainText("텍스트 입력")
+            self.ui.textEdit_description.setStyleSheet("""
+                QTextEdit {
+                    border: 2px solid #fdcb01;
+                    border-radius: 10px;
+                    padding: 5px;
+                    font: bold 16px "Comic Sans MS";
+                    background-color: #FFF8DC;
+                    color: gray;
+                }
+            """)
+
+
+#######################################################################
+
+
+
+#######################################################################
+
+    def load_images(self):
+        """QLabel에 이미지 로드 및 크기 조절 (비율 유지 + 고화질 변환)"""
+
+        self.im_01 = QPixmap("/nas/Batz_Maru/pingu/imim/publish/logo.png")
+        self.im_02 = QPixmap("/nas/Batz_Maru/pingu/imim/publish/leave_work.png")
+        self.im_03 = QPixmap("/nas/Batz_Maru/pingu/imim/publish/publish_right.png")
+
+        # QLabel 크기 가져오기
+        size_1 = self.ui.label_image_1.size()
+        size_2 = self.ui.label_image_2.size()
+        size_3 = self.ui.label_image_3.size()
+
+        # 이미지 크기 조정 (비율 유지 + 고화질 변환)
+        self.ui.label_image_1.setPixmap(self.im_01.scaled(size_1, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.ui.label_image_2.setPixmap(self.im_02.scaled(size_2, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.ui.label_image_3.setPixmap(self.im_03.scaled(size_3, Qt.KeepAspectRatio, Qt.SmoothTransformation))
